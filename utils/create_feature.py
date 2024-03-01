@@ -1,6 +1,11 @@
 import os
 import torch
 import numpy as np
+import sys
+# 要添加的路径
+new_path = r'C:\Users\86176\Desktop\torch-project\Mobilefacenet\face_attendance'
+# 将路径添加到sys.path
+sys.path.append(new_path)
 import config as FIG
 from PIL import Image
 import torchvision.transforms as transforms
@@ -59,7 +64,7 @@ class create_feature():
                 f.writelines(":")
                 f.writelines(feature)
                 f.writelines('\n')
-        f.close()
+        # f.close()
     # 查找路径下的所有图片
     def search_picutre(self,img_path):
         imgList = []
@@ -67,7 +72,7 @@ class create_feature():
         dirs = os.listdir(img_path)
         # print(type(dirs))
         for file in dirs:
-            img_name.append(file)
+            img_name.append(file)    #img_name=1.jpg
             pic_dir = os.path.join(img_path, file)
             # print(pic_dir)
             a = []
@@ -125,12 +130,13 @@ class create_feature():
                 # 进行数据输入和保存特征向量
                 model.eval()
                 with torch.no_grad():
-                    features= model(img_tensor)
-                    features = features.detach().numpy()  # 将tensor转为ndarry
+                    features = model(img_tensor)
+                    features = features.detach().cpu().numpy()  # 将tensor转为ndarray
                     Oneperson_feature.append(features)
+
             featuremean = np.array(Oneperson_feature).mean(axis=0)
             featurelist.append(featuremean.tolist())
-            Oneperson_feature.clear()  # 计算完一个人的特征向量后清除，避免对后面计算产生影响
+            Oneperson_feature.clear()
         # print(featurelist[0][0])
         create_feature.save_feature_2(self,featurelist,img_name)
         print("完成了{}个人的特征向量提取".format(len(featurelist)))
@@ -140,7 +146,8 @@ if __name__ == '__main__':
     model_type = FIG.model_type
     model_path = FIG.create_feature_model_path_1
     save_feature_path = FIG.save_feature_path
-    img_path = r'D:\python\pycharm project\deep_learning\face\face_attendance\data'
+    # img_path = r'D:\python\pycharm project\deep_learning\face\face_attendance\data'
+    img_path=r"C:\Users\86176\Desktop\torch-project\Mobilefacenet\Fresh pictures"
     create_features = create_feature(model_path=model_path,catch_picture_size=picture_size,img_path=img_path,model_type=model_type,
                                      feature_path=save_feature_path)
     create_features.feature()

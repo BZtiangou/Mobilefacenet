@@ -2,12 +2,16 @@ import cv2
 import dlib
 import os
 import random
+import sys
+# 要添加的路径
+new_path = r'C:\Users\86176\Desktop\torch-project\Mobilefacenet\face_attendance'
+# 将路径添加到sys.path
+sys.path.append(new_path)
 import config as FIG
-
 
 # 图片存储位置
 user_name = FIG.catch_picture_username
-output_dir = FIG.catch_picture_path+user_name+'/'
+output_dir = os.path.join(FIG.catch_picture_path,user_name)
 size = FIG.catch_picture_size
 
 
@@ -45,7 +49,7 @@ cap = cv2.VideoCapture(0)
 
 while True:
     if(index<=picture_num):
-        print('正在截取低%s张图片' %index)
+        print('正在截取第%s张图片' %index)
         # 摄像头读取图片
         success , img = cap.read()
         # 灰度化
@@ -76,6 +80,8 @@ while True:
         key = cv2.waitKey(60)&0xff
     if index>picture_num:
         print('已经采集完成')
+        print(output_dir)
+        
         cap.release()
         cv2.destroyAllWindows()
         break

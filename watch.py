@@ -127,7 +127,7 @@ class video():
             else:
                 cv2.putText(img,"PFS:----" , (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
             cv2.imshow("img",img)
-            if cv2.waitKeyEx(1) == ord('q'):  # 如果按下‘q’则推出
+            if cv2.waitKeyEx(1) == ord('q'):  # 如果按下‘q’则推出  或者强行终止
                 break
 
 

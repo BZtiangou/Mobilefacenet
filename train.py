@@ -4,7 +4,7 @@ import torch
 import torchvision
 import torch.nn as nn
 import config as FIG
-from model.arc_margin import ArcNet
+from model.arc_margin import ArcNetWithTripletLoss
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from utils.create_dataloader import LoadDate
@@ -68,62 +68,9 @@ class face_recognition():
                                                           shuffle=False)
 
             # 载入模型和预训练模型
-            if (model_type == 'resnet_101'):
-                model_weight_path = 'weight/resnet101.pth'
-                pth = torch.load(model_weight_path)
-                net = torchvision.models.resnet101(pretrained=False)  # 默认为Flase,设置True会下载预训练文件
-                net_dict = net.state_dict()
-                pretrained_dict = {k: v for k, v in pth.items() if k in net_dict and (v.shape == net_dict[k].shape)}
-                net_dict.update(pretrained_dict)
-                net.load_state_dict(net_dict, strict=False)
-                # torchvision 的resnet输出分类为1000中，根据自己的任务修改分类数量
-                net.fc = nn.Linear(2048, self.out_features)
-                net = net.to(device)
-                print(net)
-
-            if (model_type == 'resnet_50'):
-                model_weight_path = 'weight/resnet50.pth'
-                pth = torch.load(model_weight_path)
-                net = torchvision.models.resnet50(pretrained=False)  # 默认为Flase,设置True会下载预训练文件
-                net_dict = net.state_dict()
-                pretrained_dict = {k: v for k, v in pth.items() if k in net_dict and (v.shape == net_dict[k].shape)}
-                net_dict.update(pretrained_dict)
-                net.load_state_dict(net_dict, strict=False)
-                # torchvision 的resnet输出分类为1000中，根据自己的任务修改分类数量
-                net.fc = nn.Linear(2048, 128)
-                net.fc_1 = nn.Linear(128, self.out_features)
-                net = net.to(device)
-                print(net)
-
-            if (model_type == 'resnet_34'):
-                model_weight_path = 'weight/resnet34.pth'
-                pth = torch.load(model_weight_path)
-                net = torchvision.models.resnet34(pretrained=False)  # 默认为Flase,设置True会下载预训练文件
-                net_dict = net.state_dict()
-                pretrained_dict = {k: v for k, v in pth.items() if k in net_dict and (v.shape == net_dict[k].shape)}
-                net_dict.update(pretrained_dict)
-                net.load_state_dict(net_dict, strict=False)
-                # torchvision 的resnet输出分类为1000中，根据自己的任务修改分类数量
-                net.fc = nn.Linear(512, self.out_features)
-                net = net.to(device)
-                print(net)
-
-            if (model_type == 'resnet_18'):
-                model_weight_path = 'weight/resnet34.pth'
-                pth = torch.load(model_weight_path)
-                net = torchvision.models.resnet18(pretrained=False)  # 默认为Flase,设置True会下载预训练文件
-                net_dict = net.state_dict()
-                pretrained_dict = {k: v for k, v in pth.items() if k in net_dict and (v.shape == net_dict[k].shape)}
-                net_dict.update(pretrained_dict)
-                net.load_state_dict(net_dict, strict=False)
-                # torchvision 的resnet输出分类为1000中，根据自己的任务修改分类数量
-                net.fc = nn.Linear(512, self.out_features)
-                net = net.to(device)
-                print(net)
-
             if(model_type == 'mobilefacenet'):
                 net = MobileFaceNet()
-                metric_fc = ArcNet(512,self.out_features)
+                metric_fc = ArcNetWithTripletLoss(512,self.out_features)
                 metric_fc.to(device)
                 net = net.to(device)
                 print(net)
